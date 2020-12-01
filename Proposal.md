@@ -11,8 +11,8 @@ This project uses the 2012 CBECS Survey Data:
 
 ## Questions
 
-Topic: The relationship between ownership type and fuel oil usage in commercial
-buildings in US.
+Topic: The relationship between ownership status and fuel oil usage for
+commercial buildings in US.
 
  - **Are government-owned commercial buildings in US more likely to
  use fuel oil as an energy source? Do they consume more fuel oil?**
@@ -56,9 +56,11 @@ different regions/divisions.
 
 3. Using the given survey weights, we can use a regression model to determine 
 whether government owned commercial buildings use more fuel oil as an energy 
-source. Also, 
+source. Confidence intervals for fuel oil consumption of buildings in different
+regions can be constructed.
 
-4. We can consider
+4. We can consider using propensity score analysis to infer possible causal
+relationship between ownership status and fuel oil usage.<sup>[3]</sup>
 
 ## References
 
@@ -66,5 +68,8 @@ source. Also,
 
 2. Jackknife resampling in Wikipedia:
 [Link](https://en.wikipedia.org/wiki/Jackknife_resampling)
+
+3. Propensity Score Analysis with Survey Weighted Data
+[Link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5802372/)
 
 
