@@ -69,7 +69,7 @@ relationship between ownership status and fuel oil usage.<sup>[3]</sup>
 2. Jackknife resampling in Wikipedia:
 [Link](https://en.wikipedia.org/wiki/Jackknife_resampling)
 
-3. Propensity Score Analysis with Survey Weighted Data
+3. Propensity Score Analysis with Survey Weighted Data:
 [Link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5802372/)
 
 
