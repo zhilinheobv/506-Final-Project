@@ -1,8 +1,8 @@
 # Stats 506 Final Project
 
-Zhilin He: zhilinhe@umich.edu
+Zhilin He, zhilinhe@umich.edu
 
-# Files
+## Files
 
 Proposal.md: Proposal
 
