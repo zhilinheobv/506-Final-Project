@@ -7,3 +7,7 @@ Zhilin He, zhilinhe@umich.edu
 Proposal.md: Proposal
 
 2012_public_use_data_aug2016.csv: Data file
+
+draft.Rmd: Draft report
+
+source.R: Source R file

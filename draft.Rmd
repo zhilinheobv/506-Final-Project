@@ -1,0 +1,32 @@
+---
+title: "Stats 506, F20, Final Project"
+author: "Zhilin He, zhilinhe@umich.edu"
+date: "`r format.Date(Sys.Date(), '%B %d, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# 79: -------------------------------------------------------------------------
+#! We generally don't need to see the code in the results document.
+knitr::opts_chunk$set(echo = FALSE)
+#! Make sure all chunks have a label. This one is labelled 'setup'.
+```
+
+# Introduction
+
+
+
+```{r setup}
+library(survey)
+library(ggplot2)
+```
+
+# Analysis
+
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+# Conclusion
+
