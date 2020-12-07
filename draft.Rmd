@@ -2,7 +2,8 @@
 title: "Stats 506, F20, Final Project"
 author: "Zhilin He, zhilinhe@umich.edu"
 date: "`r format.Date(Sys.Date(), '%B %d, %Y')`"
-output: html_document
+output: html_document:
+  theme: flatly
 ---
 
 ```{r setup, include=FALSE}
@@ -14,18 +15,32 @@ knitr::opts_chunk$set(echo = FALSE)
 
 # Introduction
 
+## Data
 
+This project uses the 2012 CBECS data. It contains 1119 variables and 6720 
+sampled observations. The data contains all aspects of information concerning
+energy consumption about commercial buildings all across the US.
 
-```{r setup}
+## Model
+
+```{r load_data, include=FALSE}
 library(survey)
 library(ggplot2)
+library(tidyverse)
+cbecs = read.csv("./2012_public_use_data_aug2016.csv")
 ```
 
 # Analysis
 
+## Data Cleaning and Visualization
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+
+```{r data cleaning, echo=FALSE}
+cbecs = cbecs %>% select(id=PUBID, div=CENDIV, gov=GOVOWN, fo_used=FKUSED, 
+                         fo_type=FKTYPE, heating=FKHTBTU, cooling=FKCLBTU,
+                         waterheating=FKWTBTU, cooking=FKCKBTU, other=FKOTBTU,
+                         total=FKBTU, expenditure=FKEXP)
+
 ```
 
 # Conclusion
