@@ -3,9 +3,9 @@ title: "Stats 506, F20, Final Project"
 author: "Zhilin He, zhilinhe@umich.edu"
 date: "`r format.Date(Sys.Date(), '%B %d, %Y')`"
 output:
-  pdf_document: default
   html_document:
     theme: cerulean
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -41,7 +41,8 @@ This project uses the 2012 CBECS data. It contains 1119 variables and 6720
 sampled observations. The data contains all aspects of information concerning
 energy consumption about commercial buildings all across the US.
 
-We choose Detailed descriptions for the chosen variables are shown in Table 1 below.
+We choose Detailed descriptions for the chosen variables are shown in Table 1
+below.
 
 | Variable Name   | Variable Description                           |
 | --------------- |:----------------------------------------------:|
@@ -72,9 +73,7 @@ estimate<sup>[2]</sup>. We also use Pearson's chi-squared test to verify
 whether the effect of building ownership is significant for fuel oil
 usage.
 
-# Results
-
-Summary of the sampled data is shown in Table 2.
+# Results {.tabset .tabset-pills}
 
 ```{r load_data, include=FALSE}
 library(survey)
@@ -83,6 +82,62 @@ library(tidyverse)
 library(knitr)
 cbecs = read.csv("./2012_public_use_data_aug2016.csv")
 ```
+
+## Report
+
+Summary of the cleaned dataset is shown in Table 2. We calculate the weighted
+frequency of fuel oil usage using the survey weights. From Table 3, we can 
+see that the percentage of government buildings that use fuel oil is greater
+in all divisions, but the difference is more obvious in Middle Atlantic,
+East North Central, West North Central and South Atlantic divisions. We use
+Pearson chi-squared test to verify whether this difference is statistically
+significant. Table 4 shows that the difference of fuel oil usage between 
+government and non-government buildings is significant for all divisions. 
+This is possibly due to the fact that the full sample size is large enough to
+identify any differences.
+
+We also calculate the annual consumption of fuel oil for the buildings 
+using it as an energy source. The consumptions for each specific use are
+also calculated. Figure 1 is the graph for consumptions in different 
+divisions with estimated error bars. In New England, East North Central,
+Middle and South Atlantic divisions, government buildings consume significantly
+more fuel oil than non-government buildings on average. In Mountain Division,
+the difference is not significant. In other divisions, non-government buildings
+consume more fuel oil annually. Overall, because New England and Middle 
+Atlantic divisions consume fuel oil the most in the US, government buildings
+consume significantly more fuel oil than other buildings annually on average.
+
+Fuel oil can be used in many ways in buildings. We consider the differences of
+uses between government buildings and non-government ones. From Figure 2 we 
+can clearly see that uses of fuel oil mainly differs by
+census divisions, possibly due to climate reasons. For East South Central,
+West South Central, Mountain and Pacific divisions, heating is not the main 
+use of fuel oil. In these divisions, government buildings almost only use fuel
+oil for other reasons (including manufacturing and electricity generation).
+But non-government buildings still use some fuel oil for heating.
+
+In this project, "fuel oil" includes (heavy) fuel oil, kerosene and diesel.
+We consider the differences of type of fuel oil used in those buildings
+using fuel oil as an energy source. Figure 3 shows that in general, government
+buildings use less heavy fuel oil than non-government buildings. However,
+in Mountain Division, government buildings use 
+significantly more heavy fuel oil. In New England, East and West North Central
+divisions, government buildings use kerosene more, but in other divisions,
+the difference is not obvious or non-government buildings use kerosene more.
+The type of fuel oil that buildings use also differs by census division.
+
+Detailed point estimates and confidence intervals are included in the "Tables"
+section.
+
+This analysis provides some evidence for the assumption 
+that government-owned buildings are more likely to use fuel oil as a source of
+energy, and they consume more fuel oil. However, generally non-government
+buildings consume more heavy fuel oil which is more polluting than kerosene and
+diesel.
+
+## Tables
+
+<center>**Table 2**. Summary of variables</center>
 
 ```{r data cleaning, echo=FALSE, class.output = ".bordered"}
 ## Select variables and clean the data
@@ -110,10 +165,8 @@ kable(summ[, 1:6], row.names=F)
 kable(summ[, 7:12], row.names=F)
 ```
 
-<center>**Table 2**. Summary of variables</center>
-
-We calculate the weighted frequency of fuel oil usage using the survey
-weights.
+<center>**Table 3**. Frequency table of buildings using oil
+by census division and ownership</center>
 
 ```{r usage, echo=FALSE}
 sampweights = cbswt$FINALWT
@@ -135,14 +188,7 @@ ps = psumm %>% rename(ownership=gov, division=div, `percent used`=percent,
 kable(ps, row.names=F)
 ```
 
-<center>**Table 3**. Frequency table of buildings using oil
-by census division and ownership</center>
-
-From Table 3, we can see that the percentage of government buildings that
-use fuel oil is greater in all divisions, but the difference is more obvious
-in Middle Atlantic, East North Central, West North Central and South Atlantic
-divisions. We can use Pearson chi-squared test to verify whether this
-difference is statistically significant.
+<center>**Table 4**. Result of chi-squared tests</center>
 
 ```{r chisq_test, echo=FALSE}
 pchi = data.frame(matrix(ncol = 3, nrow = 10))
@@ -159,17 +205,7 @@ pchi[10, 3] = ifelse(a$p.value < 0.001, "p < 0.001", round(a$p.value, 3))
 kable(pchi, row.names=F)
 ```
 
-<center>**Table 4**. Result of chi-squared tests</center>
-
-It turns out the difference of fuel oil usage between government and 
-non-government buildings is significant for all divisions. This is
-possibly due to the fact that the full sample size is large enough to
-identify this difference.
-
-We also calculate the annual consumption of fuel oil for the buildings 
-using it as an energy source. The consumptions for each specific use are
-also calculated. The graph for consumptions in different divisions is
-shown below, with estimated error bars:
+<center>**Table 5**. Mean annual fuel oil consumption for buildings</center>
 
 ```{r consumption, echo=FALSE}
 fouseddf = cbind(cbswt, cbsdt) %>% filter(fo_used == TRUE)
@@ -182,7 +218,7 @@ pconsm = svyby(~total, by=~gov+div, des1, svymean) %>%
   mutate(lower = total - se * qnorm(.975),
          upper = total + se * qnorm(.975)) %>%
   rename(mean = total)
-p2 = ggplot(pconsm, aes(x=div, y=mean, fill=gov)) +
+p1 = ggplot(pconsm, aes(x=div, y=mean, fill=gov)) +
       geom_bar(position="dodge", stat="identity") +
       geom_errorbar(aes(ymin=lower, ymax=upper), width=.2,
                     position=position_dodge(.9)) +
@@ -190,11 +226,7 @@ p2 = ggplot(pconsm, aes(x=div, y=mean, fill=gov)) +
       xlab('Division') +
       ylab('Mean annual consumption of fuel oil (thousand BTU)') +
       theme(legend.title = element_blank())
-p2
 ```
-
-<center>**Figure 1**. Mean annual fuel oil consumption for buildings
-by division and ownership</center>
 
 ```{r consumption_total, echo=FALSE}
 ptotcon = svyby(~total, by=~gov, des1, svymean) %>%
@@ -206,20 +238,7 @@ pcon = rbind(pconsm, ptotcon)
 kable(pcon, row.names=F)
 ```
 
-<center>**Table 5**. Mean annual fuel oil consumption for buildings</center>
-
-In New England, East North Central, Middle and South Atlantic 
-divisions, government buildings consume significantly more fuel oil than
-non-government buildings on average. In Mountain Division, the difference is
-not significant. In other divisions, non-government buildings consume more fuel
-oil annually. Overall, because New England and Middle Atlantic divisions 
-consume fuel oil the most in the US, government buildings consume significantly
-more fuel oil than other buildings annually on average.
-
-## Detailed uses
-
-Fuel oil can be used in many ways in buildings. We consider the differences of
-uses between goverment buildings and non-government ones.
+<center>**Table 6**. Detailed uses of fuel oil</center>
 
 ```{r uses, echo=FALSE}
 puses = svyby(~heating + cooling + waterheating + cooking + other,
@@ -231,7 +250,24 @@ pus = rbind(puses, ptuses) %>% select(-starts_with("se"))
 kable(pus, row.names=F)
 ```
 
-<center>**Table 6**. Detailed uses of fuel oil</center>
+<center>**Table 7**. Types of fuel oil</center>
+
+```{r type_fuel_oil, echo=FALSE}
+ptype = svyby(~fo_type, by=~gov+div, des1, svytotal) 
+pttype = svyby(~fo_type, by=~gov, des1, svytotal)
+pttype$div = "Total"
+ptp = rbind(ptype, pttype) %>% select(-starts_with("se"))
+kable(ptp, row.names=F)
+```
+
+## Plots
+
+```{r p1, echo=FALSE}
+p1
+```
+
+<center>**Figure 1**. Mean annual fuel oil consumption for buildings
+by division and ownership</center>
 
 ```{r fig3, echo=FALSE, fig.width = 8, fig.height = 10}
 p3 = pus %>% 
@@ -246,29 +282,6 @@ p3
 
 <center>**Figure 2**. Stacked bar plots for different uses of fuel oil</center>
 
-From Figure 2 we can clearly see that uses of fuel oil mainly differs by
-census divisions, possibly due to climate reasons. For East South Central,
-West South Central, Mountain and Pacific divisions, heating is not the main 
-use of fuel oil. In these divisions, government buildings almost only use fuel
-oil for other reasons (including manufacturing and electricity generation).
-But non-government buildings still use some fuel oil for heating.
-
-## Type of fuel oil
-
-In this project, "fuel oil" includes (heavy) fuel oil, kerosene and diesel.
-We consider the differences of type of fuel oil used in those buildings
-using fuel oil as an energy source.
-
-```{r type_fuel_oil, echo=FALSE}
-ptype = svyby(~fo_type, by=~gov+div, des1, svytotal) 
-pttype = svyby(~fo_type, by=~gov, des1, svytotal)
-pttype$div = "Total"
-ptp = rbind(ptype, pttype) %>% select(-starts_with("se"))
-kable(ptp, row.names=F)
-```
-
-<center>**Table 7**. Types of fuel oil</center>
-
 ```{r fig4, echo=FALSE, fig.width = 8, fig.height = 10}
 p4 = ptp %>%
   pivot_longer(-c(gov, div), names_prefix = "fo_type",
@@ -282,27 +295,6 @@ p4
 ```
 
 <center>**Figure 3**. Stacked bar plots for type of fuel oil </center>
-
-In general, government buildings use less heavy fuel oil than non-government
-buildings. However, in Mountain Division, government buildings use 
-significantly more heavy fuel oil. In New England, East and West North Central
-divisions, government buildings use kerosene more, but in other divisions,
-the difference is not obvious or non-government buildings use kerosene more.
-The type of fuel oil that buildings use also differs by census division.
-
-# Conclusion
-
-The analysis about CBECS 2012 data provides some evidence for the assumption 
-that government-owned buildings are more likely to use fuel oil as a source of
-energy, and they consume more fuel oil. However, generally non-government
-buildings consume more heavy fuel oil which is more polluting than kerosene and
-diesel. 
-
-Different census divisions use fuel oil for different reasons. In divisions
-where heating is not the main use of fuel oil, government buildings don't use
-fuel oil for heating entirely, while non-government buildings still use it for
-heating.
-
 
 # References
 
